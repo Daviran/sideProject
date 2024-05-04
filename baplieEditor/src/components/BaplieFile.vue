@@ -3,29 +3,33 @@ import { ref } from 'vue';
 
 export default {
   setup() {
-    const textObject = ref(null);
+    const baplieData = ref(null);
     const handleFileChange = (event) => {
       const file = event.target.files[0];
       if (file && file.type === 'text/plain') {
         const reader = new FileReader();
         reader.onload = () => {
-            const text = reader.result;
-          textObject.value = { content: text};
+            const baplie = reader.result;
+            const parsedBaplie = splitTextBySingleQuote(baplie)
+          baplieData.value = { content: parsedBaplie};
         };
         reader.readAsText(file);
       } else {
-        // Handle error if file is not txt
-        console.error('Please select a valid text file.');
+        // Handle error if file is not txt or edi
+        console.error('Please select a valid text/edi file.');
       }
     };
     const handleInput =(e) => {
-        if(textObject.value) {
-            textObject.value.content = e.target.innerText;
+        if(baplieData.value) {
+            baplieData.value.content = e.target.innerText;
         }
     };
+    const splitTextBySingleQuote = (text) => {
+  return text.split("'").join("\n");
+};
     const saveAsTxt = () => {
-         if (textObject.value) {
-        const blob = new Blob([textObject.value.content], { type: 'text/plain' });
+         if (baplieData.value) {
+        const blob = new Blob([baplieData.value.content], { type: 'text/plain' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -38,7 +42,7 @@ export default {
     }
 
     return {
-        textObject,
+        baplieData,
         handleFileChange,
         handleInput,
         saveAsTxt
@@ -50,9 +54,9 @@ export default {
 <template>
   <div>
     <input type="file" @change="handleFileChange" accept=".txt">
-    <div v-if="textObject !== null">
+    <div v-if="baplieData !== null">
       <h2>Baplie Content</h2>
-      <pre contenteditable="true" @input="handleInput">{{ textObject.content }}</pre>
+      <pre contenteditable="true" @input="handleInput">{{ baplieData.content }}</pre>
       <button @click="saveAsTxt">Save modified Baplie file</button>
     </div>
   </div>
