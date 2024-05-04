@@ -1,14 +1,10 @@
 <script setup>
-import BaplieViewer from "./views/BaplieViewer.vue"
-
+// import BaplieViewer from "./views/BaplieViewer.vue"
+// import HomeView from "./views/HomeView.vue";
 </script>
 
 <template>
-  <header>
-
-      <h1>EDI Editor - Removes the headaches from EDIs reading/editing</h1>
-        <baplie-viewer>
-  </baplie-viewer>
-  </header>
-
+  <div>
+    <router-view></router-view>
+  </div>
 </template>
