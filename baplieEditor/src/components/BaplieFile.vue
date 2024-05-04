@@ -5,6 +5,7 @@ export default {
   setup() {
     const baplieData = ref(null);
     const preElement = ref(null); // Reference to the pre element
+    let originalBaplieName = ''; // Variable to store the original filename
     const handleFileChange = (event) => {
       const file = event.target.files[0];
       if (file && file.type === 'text/plain') {
@@ -15,6 +16,7 @@ export default {
           baplieData.value = { content: parsedBaplie};
         };
         reader.readAsText(file);
+        originalBaplieName= file.name;
       } else {
         // Handle error if file is not txt or edi
         console.error('Please select a valid text/edi file.');
@@ -51,11 +53,13 @@ export default {
         // Update the baplieData.content with the modified text
         const modifiedContent = preElement.value.textContent;
         baplieData.value.content = modifiedContent;
+        const baplieNameParts = originalBaplieName.split('.');
+        const modifiedBapliedName = baplieNameParts.slice(0,-1).join('.') + '_modified.'+ baplieNameParts.pop();
         const blob = new Blob([modifiedContent], { type: 'text/plain' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'modified_baplie.txt';
+        a.download = modifiedBapliedName;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
