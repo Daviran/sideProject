@@ -21,22 +21,37 @@ export default {
       }
     };
     const handleInput =() => {
-        if(baplieData.value && preElement.value) {
-          const selection = window.getSelection();
+        if(baplieData.value && preElement) {
+          const selection = window.getSelection(); // get current selection in the doc
           const selectionStart = selection.anchorOffset; // Get the cursor position before modification
-            baplieData.value.content = preElement.value.innerText;
-            restoreCursorPosition(selection, selectionStart);
-        }
+          const selectionEnd = selection.focusOffset;
+          const modifiedContent = preElement.value.textContent; // updating the baplie in order to save it
+
+          baplieData.value.content = modifiedContent; // Update the content with the modified text
+          // we needed to set a timeout in order to move the cursor back to the selection. The issue
+          // with no timeout is that the DOM has not yet finished its update
+          // therefore putting the cursor at the beginning of the txt..
+
+          setTimeout(() => {
+             // Restore the cursor position after modification
+              const range = document.createRange(); // the range object is used to select a portion of txt in order to perform operations
+              const textNode = preElement.value.childNodes[0]; // textNode = first thing in the preElement 'box'
+              range.setStart(textNode, selectionStart);
+              range.setEnd(textNode, selectionEnd);
+               selection.removeAllRanges();
+              selection.addRange(range);
+               }, 0);
     };
-    const restoreCursorPosition = (selection, selectionStart) => {
-      selection.collapse(selection.anchorNode, selectionStart); // Restore the cursor position
-    };
+  }
     const splitTextBySingleQuote = (text) => {
   return text.split("'").join("\n");
 };
     const saveAsTxt = () => {
-         if (baplieData.value) {
-        const blob = new Blob([baplieData.value.content], { type: 'text/plain' });
+         if (baplieData.value && preElement) {
+        // Update the baplieData.content with the modified text
+        const modifiedContent = preElement.value.textContent;
+        baplieData.value.content = modifiedContent;
+        const blob = new Blob([modifiedContent], { type: 'text/plain' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -64,7 +79,7 @@ export default {
     <input type="file" @change="handleFileChange" accept=".txt">
     <div v-if="baplieData !== null">
       <h2>Baplie Content</h2>
-      <pre contenteditable="true" @input="handleInput">{{ baplieData.content }}</pre>
+      <pre ref="preElement" contenteditable="true" @input="handleInput">{{ baplieData.content }}</pre>
       <button @click="saveAsTxt">Save modified Baplie file</button>
     </div>
   </div>
