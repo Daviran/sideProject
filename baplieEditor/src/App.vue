@@ -6,7 +6,7 @@ import BaplieViewer from "./views/BaplieViewer.vue"
 <template>
   <header>
 
-      <h1>Baplie Editor - Removes the headaches from Baplie reading</h1>
+      <h1>EDI Editor - Removes the headaches from EDIs reading/editing</h1>
         <baplie-viewer>
   </baplie-viewer>
   </header>

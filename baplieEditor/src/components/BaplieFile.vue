@@ -4,6 +4,7 @@ import { ref } from 'vue';
 export default {
   setup() {
     const baplieData = ref(null);
+    const preElement = ref(null); // Reference to the pre element
     const handleFileChange = (event) => {
       const file = event.target.files[0];
       if (file && file.type === 'text/plain') {
@@ -19,10 +20,16 @@ export default {
         console.error('Please select a valid text/edi file.');
       }
     };
-    const handleInput =(e) => {
-        if(baplieData.value) {
-            baplieData.value.content = e.target.innerText;
+    const handleInput =() => {
+        if(baplieData.value && preElement.value) {
+          const selection = window.getSelection();
+          const selectionStart = selection.anchorOffset; // Get the cursor position before modification
+            baplieData.value.content = preElement.value.innerText;
+            restoreCursorPosition(selection, selectionStart);
         }
+    };
+    const restoreCursorPosition = (selection, selectionStart) => {
+      selection.collapse(selection.anchorNode, selectionStart); // Restore the cursor position
     };
     const splitTextBySingleQuote = (text) => {
   return text.split("'").join("\n");
@@ -45,7 +52,8 @@ export default {
         baplieData,
         handleFileChange,
         handleInput,
-        saveAsTxt
+        saveAsTxt,
+        preElement
     };
   }
 };
