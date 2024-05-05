@@ -1,16 +1,13 @@
 <template>
-    <v-card>
-      <v-layout>
-        <v-app-bar
+  <div>
+    <v-app-bar
           color="primary"
           prominent
         >
           <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
   
-          <v-toolbar-title>EDI Editor</v-toolbar-title>
-  
-          <v-spacer></v-spacer>
-  
+          <v-toolbar-title @click="backToHome"><h4 class="pointer">EDI Editor</h4></v-toolbar-title>
+
         </v-app-bar>
   
         <v-navigation-drawer
@@ -24,8 +21,8 @@
   </v-list-item>
 </v-list-item-group>
         </v-navigation-drawer>
-      </v-layout>
-    </v-card>
+  </div>
+        
   </template>
   <script>
   import { ref, watch } from 'vue';
@@ -66,13 +63,22 @@
         router.push('/baplie'); // Navigate to '/baplie' route
       }
     };
+    const backToHome = () => {
+      router.push('/')
+    }
       // Return the reactive variables and methods
       return {
         drawer,
         group,
         items,
-        handleItemClick
+        handleItemClick,
+        backToHome
       };
     }
   };
   </script>
+  <style>
+.pointer {
+  cursor: pointer;
+}
+</style>

@@ -1,14 +1,10 @@
 <template>
     <div>
-        <banner-header>
-
-</banner-header>
-
+hi
 
     </div>
 
 </template>
 
 <script setup>
- import BannerHeader from '../components/BannerHeader.vue';
 </script>
