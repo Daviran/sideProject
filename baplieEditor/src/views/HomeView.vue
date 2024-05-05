@@ -8,5 +8,5 @@
 </template>
 
 <script setup>
-import BaplieFile from "../components/BaplieFile.vue"
+import BaplieFile from "../components/EdiFile.vue"
 </script>
