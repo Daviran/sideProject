@@ -1,12 +1,21 @@
 <script>
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
 import {useStore} from 'vuex';
 export default {
   setup() {
     const ediData = ref(null);
     const store = useStore();
+    const hiddenInput = ref(null);
     const preElement = ref(null); // Reference to the pre element
     let originalEdiName = ''; // Variable to store the original filename
+    const loadEdiContentFromStore = () => {
+      // Retrieve EDI content from the Vuex store
+      const storedEdiContent = store.getters.getEdiContent;
+      ediData.value = { content: storedEdiContent };
+      hiddenInput.value.value = storedEdiContent; // Set value of hidden input
+    };
+    onMounted(loadEdiContentFromStore);
+
     const handleFileChange = (event) => {
       const file = event.target.files[0];
       if (file && file.type === 'text/plain') {
@@ -25,6 +34,8 @@ export default {
         console.error('Please select a valid text/edi file.');
       }
     };
+
+
     const handleInput =() => {
         if(ediData.value && preElement) {
           const selection = window.getSelection(); // get current selection in the doc
@@ -69,13 +80,21 @@ export default {
         document.body.removeChild(a);
       }
     }
+    const clearData = () => {
+      ediData.value = null;
+      store.dispatch('updateEdiContent', ''); // Clear store data
+      preElement.value.textContent = ''; // Clear pre content
+      hiddenInput.value.value = ''; // Clear hidden input value
+    };
 
     return {
         ediData,
         handleFileChange,
         handleInput,
         saveAsTxt,
-        preElement
+        preElement,
+        hiddenInput,
+        clearData
     };
   }
 };
@@ -83,12 +102,15 @@ export default {
 
 <template>
   <div class="w-25">
-    <v-file-input color="#5865f2" type="file" label="Please insert your file" @change="handleFileChange" accept=".txt">
+    <input type="hidden" ref="hiddenInput" :value="ediData ? ediData.content : ''" >
+    <v-file-input v-if="ediData === null" color="#5865f2" type="file" label="Please insert your file" @change="handleFileChange" accept=".txt"  :disabled="ediData !== null">
     </v-file-input>
     <div v-if="ediData !== null">
       <h2>Edi Content</h2>
       <pre ref="preElement" contenteditable="true" @input="handleInput">{{ ediData.content }}</pre>
       <v-btn class="mt-6" color="#5865f2"  @click="saveAsTxt">Save Edi file</v-btn>
+      <v-btn class="mt-2" color="red" @click="clearData" :disabled="ediData === null">Clear Edi</v-btn>
+
     </div>
   </div>
 </template>
