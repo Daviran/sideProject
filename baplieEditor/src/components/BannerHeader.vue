@@ -6,7 +6,7 @@
         >
           <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
   
-          <v-toolbar-title @click="backToHome"><h4 class="pointer">EDI Editor</h4></v-toolbar-title>
+          <v-toolbar-title><h4  @click="backToHome" class="pointer w-25">EDI Editor</h4></v-toolbar-title>
 
         </v-app-bar>
   
@@ -36,20 +36,20 @@
       const group = ref(null);
       const items = [
         {
-          title: 'Baplie Viewer',
-          value: 'BaplieViewer',
+          title: 'Baplie Editor',
+          value: 'BaplieEditor',
         },
         {
-          title: 'Prestow Viewer',
-          value: 'PrestowViewer',
+          title: 'Prestow Editor',
+          value: 'PrestowEditor',
         },
         {
-          title: 'Codeco Viewer',
-          value: 'CodecoViewer',
+          title: 'Codeco Editor',
+          value: 'CodecoEditor',
         },
         {
-          title: 'Coarri Viewer',
-          value: 'CoarriViewer',
+          title: 'Coarri Editor',
+          value: 'CoarriEditor',
         },
       ];
   
@@ -59,7 +59,7 @@
       });
       const handleItemClick = (value) => {
         console.log("clicked" + value)
-      if (value === 'BaplieViewer') {
+      if (value === 'BaplieEditor') {
         router.push('/baplie'); // Navigate to '/baplie' route
       }
     };

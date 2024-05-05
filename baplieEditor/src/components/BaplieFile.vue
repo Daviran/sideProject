@@ -79,12 +79,13 @@ export default {
 </script>
 
 <template>
-  <v-layout>
-    <input type="file" @change="handleFileChange" accept=".txt">
+  <div class="w-25">
+    <v-file-input color="#5865f2" type="file" label="Please insert your file" @change="handleFileChange" accept=".txt">
+    </v-file-input>
     <div v-if="baplieData !== null">
       <h2>Baplie Content</h2>
       <pre ref="preElement" contenteditable="true" @input="handleInput">{{ baplieData.content }}</pre>
-      <v-btn @click="saveAsTxt">Save modified Baplie file</v-btn>
+      <v-btn class="mt-6" color="#5865f2"  @click="saveAsTxt">Save modified Baplie file</v-btn>
     </div>
-  </v-layout>
+  </div>
 </template>

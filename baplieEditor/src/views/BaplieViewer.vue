@@ -3,7 +3,7 @@ import BaplieFile from "../components/BaplieFile.vue"
 </script>
 
 <template>
-  <div>
+  <div class="d-flex justify-center ma-2 pa-2">
    <baplie-file>
 
 
