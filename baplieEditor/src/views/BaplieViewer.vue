@@ -1,12 +1,8 @@
 <script setup>
-import BaplieFile from "../components/BaplieFile.vue"
 </script>
 
 <template>
-  <div class="d-flex justify-center ma-2 pa-2">
-   <baplie-file>
-
-
-   </baplie-file>
-  </div>
+<div>
+  
+</div>
 </template>

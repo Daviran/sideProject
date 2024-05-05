@@ -14,6 +14,11 @@ const router = createRouter({
       name: 'baplie',
       component: BaplieViewer
     },
+    // {
+    //   path: '/editor',
+    //   name: 'editor',
+    //   component: EditorView
+    // },
   ]
 })
 

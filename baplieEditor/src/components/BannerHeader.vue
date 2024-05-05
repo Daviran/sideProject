@@ -36,20 +36,24 @@
       const group = ref(null);
       const items = [
         {
-          title: 'Baplie Editor',
-          value: 'BaplieEditor',
+          title: 'EDI Editor',
+          value: 'EDIEditor',
         },
         {
-          title: 'Prestow Editor',
-          value: 'PrestowEditor',
+          title: 'Baplie Viewer',
+          value: 'BaplieViewer',
         },
         {
-          title: 'Codeco Editor',
-          value: 'CodecoEditor',
+          title: 'Prestow Viewer',
+          value: 'PrestowViewer',
         },
         {
-          title: 'Coarri Editor',
-          value: 'CoarriEditor',
+          title: 'Codeco Viewer',
+          value: 'CodecoViewer',
+        },
+        {
+          title: 'Coarri Viewer',
+          value: 'CoarriViewer',
         },
       ];
   
@@ -59,8 +63,18 @@
       });
       const handleItemClick = (value) => {
         console.log("clicked" + value)
-      if (value === 'BaplieEditor') {
-        router.push('/baplie'); // Navigate to '/baplie' route
+      switch(value) {
+        case 'BaplieViewer':
+          router.push('/baplie')
+          break;
+        case 'EDIEditor':
+          router.push('/editor')
+          break;
+        case 'PrestowViewer':
+          router.push('/prestow')
+          break;
+          default:
+          break;
       }
     };
     const backToHome = () => {
