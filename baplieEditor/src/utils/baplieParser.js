@@ -15,17 +15,19 @@ export function parseBaplieData(ediContent) {
       otherInformation: [],
       summary: {},
     };
-  
-    const segments = ediContent.split("'");
-  
+    const segments = ediContent.split('\n');
+
+   
     segments.forEach(segment => {
       const segmentId = segment.substring(0, 3);
+      console.log('Parsing segment: ' + segmentId)
       switch (segmentId) {
         case 'LOC': {
           // Parse location details
           const portName = segment.substring(4, 24).trim();
           const portCode = segment.substring(24, 27).trim();
           const portDetails = { name: portName, code: portCode };
+          console.log('current port details at segmentId ' + segmentId + ':' + portDetails)
           baplieData.ports.push(portDetails);
           break;
         }

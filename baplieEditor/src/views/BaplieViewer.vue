@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Baplie Viewer</h1>
-    <div v-if="baplieData">
+    <div v-if="baplieData !== null">
       <h2>Ports</h2>
       <ul>
         <li v-for="port in baplieData.ports" :key="port.code">{{ port.name }} ({{ port.code }})</li>
@@ -33,6 +33,7 @@ export default {
       const ediContent = store.getters.getEdiContent;
       if (ediContent) {
         baplieData.value = parseBaplieData(ediContent);
+        console.log(baplieData.value);
       }
     });
 
