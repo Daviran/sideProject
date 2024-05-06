@@ -101,16 +101,26 @@ export default {
 </script>
 
 <template>
-  <div class="w-25">
+
+  <div class="w-50">
     <input type="hidden" ref="hiddenInput" :value="ediData ? ediData.content : ''" >
     <v-file-input v-if="ediData === null" color="#5865f2" type="file" label="Please insert your file" @change="handleFileChange" accept=".txt"  :disabled="ediData !== null">
     </v-file-input>
     <div v-if="ediData !== null">
       <h2>Edi Content</h2>
-      <pre ref="preElement" contenteditable="true" @input="handleInput">{{ ediData.content }}</pre>
-      <v-btn class="mt-6" color="#5865f2"  @click="saveAsTxt">Save Edi file</v-btn>
-      <v-btn class="mt-2" color="red" @click="clearData" :disabled="ediData === null">Clear Edi</v-btn>
-
+      <v-row>
+        <v-col cols="8">
+           <pre ref="preElement" contenteditable="true" @input="handleInput">{{ ediData.content }}</pre>
+        </v-col>
+        <v-col cols="4">
+          <v-btn class="mb-2" color="#5865f2"  @click="saveAsTxt">Save Edi file</v-btn>
+      <v-btn class="mt-2 " color="red" @click="clearData" :disabled="ediData === null">Clear Edi</v-btn>
+        </v-col>
+      </v-row>
+      <div>
+        
+      </div>
     </div>
   </div>
+
 </template>
