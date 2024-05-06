@@ -13,7 +13,7 @@ const router = createRouter({
       path: '/baplie',
       name: 'baplie',
       component: BaplieViewer
-    },
+    }
     // {
     //   path: '/editor',
     //   name: 'editor',

@@ -1,35 +1,35 @@
 // Styles
-import "@mdi/font/css/materialdesignicons.css";
-import "vuetify/styles";
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
 
 // Vuetify
-import { createVuetify } from "vuetify";
+import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { aliases, mdi } from "vuetify/iconsets/mdi";
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
 export default createVuetify({
-    components,
-    directives,
+  components,
+  directives,
   // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
   theme: {
-    defaultTheme: "TGITheme",
+    defaultTheme: 'TGITheme',
     themes: {
       TGITheme: {
         dark: false,
         colors: {
-          primary: "#DA004B",
-          secondary: "#3D4B7C",
-          error: "#b71c1c",
-        },
-      },
+          primary: '#DA004B',
+          secondary: '#3D4B7C',
+          error: '#b71c1c'
+        }
+      }
     },
     icons: {
-      defaultSet: "mdi",
+      defaultSet: 'mdi',
       aliases,
       sets: {
-        mdi,
-      },
-    },
-  },
-});
+        mdi
+      }
+    }
+  }
+})
