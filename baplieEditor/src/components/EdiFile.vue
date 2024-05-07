@@ -18,7 +18,7 @@ export default {
     }
     onMounted(loadEdiContentFromStore)
 
-    const handleFileChange = (event) => {
+    const handleFileChange =  (event) => {
       const file = event.target.files[0]
       if (file && file.type === 'text/plain') {
         const reader = new FileReader()
@@ -26,9 +26,13 @@ export default {
           const Edi = reader.result
           const parsedEdi = splitTextBySingleQuote(Edi)
           ediData.value = { content: parsedEdi }
-          store.dispatch('updateEdiContent', parsedEdi) // Dispatch action to update EDI content in store
+          console.log('dispatching');
+          store.dispatch('updateEdiContent', parsedEdi)
         }
-        console.log('store value:' + store.getters.getEdiContent)
+        // reader.onloadend= () => {
+        //           console.log('store value:' + store.getters.getEdiContent)
+
+        // }
         reader.readAsText(file)
         originalEdiName = file.name
       } else {
