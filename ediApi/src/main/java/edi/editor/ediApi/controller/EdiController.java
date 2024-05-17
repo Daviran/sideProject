@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 @RequestMapping("/api")
 public class EdiController {
 
-    @PostMapping("/parse")
+    @PostMapping("/parse/baplie")
     public ResponseEntity<String> parseEDI(@RequestParam("file") MultipartFile file) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             BaplieParser.BaplieData baplieData = BaplieParser.parse(reader);

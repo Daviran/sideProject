@@ -1,6 +1,8 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import axios from 'axios'
+
 export default {
   setup() {
     const ediData = ref(null)
@@ -18,28 +20,42 @@ export default {
     }
     onMounted(loadEdiContentFromStore)
 
-    const handleFileChange =  (event) => {
-      const file = event.target.files[0]
-      if (file && file.type === 'text/plain') {
-        const reader = new FileReader()
-        reader.onload = () => {
-          const Edi = reader.result
-          const parsedEdi = splitTextBySingleQuote(Edi)
-          ediData.value = { content: parsedEdi }
-          console.log('dispatching');
-          store.dispatch('updateEdiContent', parsedEdi)
-        }
-        // reader.onloadend= () => {
-        //           console.log('store value:' + store.getters.getEdiContent)
+const handleFileChange = async (event) => {
+  const file = event.target.files[0];
+  const validTypes = ['text/plain', 'application/edi-x12', 'application/edi-consent'];
+  const validExtensions = ['.edi', '.txt'];
 
-        // }
-        reader.readAsText(file)
-        originalEdiName = file.name
-      } else {
-        // Handle error if file is not txt or edi
-        console.error('Please select a valid text/edi file.')
+  if (file && (validTypes.includes(file.type) || validExtensions.some(ext => file.name.endsWith(ext)))) {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const Edi = reader.result;
+      const parsedEdi = splitTextBySingleQuote(Edi);
+      ediData.value = { content: parsedEdi };
+      console.log('dispatching');
+      store.dispatch('updateEdiContent', parsedEdi);
+
+      // Send the EDI file to the backend
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const response = await axios.post('http://localhost:8080/api/parse/baplie', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        store.dispatch('updateEdiJson', response.data);
+      } catch (error) {
+        console.error('Error uploading file:', error);
       }
-    }
+    };
+    reader.readAsText(file);
+    originalEdiName = file.name;
+  } else {
+    // Handle error if file is not valid
+    console.error('Please select a valid text/edi file.');
+  }
+};
+
 
     const handleInput = () => {
       if (ediData.value && preElement) {
@@ -115,7 +131,7 @@ export default {
       type="file"
       label="Please insert your file"
       @change="handleFileChange"
-      accept=".txt"
+      accept=".txt,.edi"
       :disabled="ediData !== null"
     >
     </v-file-input>

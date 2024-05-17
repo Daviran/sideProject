@@ -1,26 +1,28 @@
-import { createStore } from 'vuex';
+import { createStore } from 'vuex'
 
-const store = createStore({
+export default createStore({
   state: {
-    ediContent: null, // Initial state for EDI file content
+    ediContent: '',
+    ediJson: null,
   },
   mutations: {
     setEdiContent(state, content) {
-      state.ediContent = content;
+      state.ediContent = content
+    },
+    setEdiJson(state, json) {
+      state.ediJson = json
     },
   },
   actions: {
     updateEdiContent({ commit }, content) {
-      commit('setEdiContent', content);
+      commit('setEdiContent', content)
+    },
+    updateEdiJson({ commit }, json) {
+      commit('setEdiJson', json)
     },
   },
   getters: {
-    getEdiContent(state) {
-      return state.ediContent;
-    },
+    getEdiContent: (state) => state.ediContent,
+    getEdiJson: (state) => state.ediJson,
   },
-});
-store.subscribe((mutation, state) => {
-    localStorage.setItem('vuex_state',JSON.stringify(state))
 })
-export default store;
