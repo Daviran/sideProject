@@ -1,13 +1,13 @@
-package edi.editor.ediapi;
+package edi.editor.ediApi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ediapiApplication {
+public class EdiApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ediapiApplication.class, args);
+		SpringApplication.run(EdiApiApplication.class, args);
 	}
 
 }
