@@ -24,10 +24,9 @@ export default {
       const file = event.target.files[0]
       const validTypes = ['text/plain', 'application/edi-x12', 'application/edi-consent']
       const validExtensions = ['.edi', '.txt']
-
       if (file) {
         const fileTypeValid = validTypes.includes(file.type)
-        const fileExtensionValid = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
+        const fileExtensionValid = validExtensions.some(ext => file.name.endsWith(ext))
 
         console.log(`File type: ${file.type}, file name: ${file.name}`)
         console.log(`File type valid: ${fileTypeValid}, file extension valid: ${fileExtensionValid}`)

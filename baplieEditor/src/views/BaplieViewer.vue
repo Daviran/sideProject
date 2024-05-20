@@ -9,7 +9,6 @@
             <th>Port of Loading</th>
             <th>Port of Discharge</th>
             <th>Port of Destination</th>
-            <th>Container Carrier</th>
             <th>Gross Weight</th>
             <th>VGM Weight</th>
           </tr>
@@ -17,10 +16,9 @@
         <tbody v-if="baplieData.containers && baplieData.containers.length > 0">
           <tr v-for="container in baplieData.containers" :key="container.number">
             <td>{{ container.number }}</td>
-            <td>{{ container.portOfLoading ? container.portOfLoading.name : '-' }}</td>
-            <td>{{ container.portOfDischarge ? container.portOfDischarge.name : '-' }}</td>
-            <td>{{ container.portOfDestination ? container.portOfDestination.name : '-' }}</td>
-            <td>{{ container.containerCarrier || '-' }}</td>
+            <td>{{ container.portOfLoading || '-' }}</td>
+            <td>{{ container.portOfDischarge || '-' }}</td>
+            <td>{{ container.portOfDestination || '-' }}</td>
             <td>{{ container.grossWeight || '-' }}</td>
             <td>{{ container.vgmWeight || '-' }}</td>
           </tr>

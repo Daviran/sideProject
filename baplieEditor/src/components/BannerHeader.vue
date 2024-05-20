@@ -67,6 +67,9 @@ export default {
         case 'PrestowViewer':
           router.push('/prestow')
           break
+          case 'CodecoViewer':
+          router.push('/codeco')
+          break
         default:
           break
       }

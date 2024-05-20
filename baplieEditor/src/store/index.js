@@ -3,26 +3,35 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     ediContent: '',
-    ediJson: null,
-  },
-  mutations: {
-    setEdiContent(state, content) {
-      state.ediContent = content
-    },
-    setEdiJson(state, json) {
-      state.ediJson = json
-    },
-  },
-  actions: {
-    updateEdiContent({ commit }, content) {
-      commit('setEdiContent', content)
-    },
-    updateEdiJson({ commit }, json) {
-      commit('setEdiJson', json)
-    },
+    baplieJson: {},
+    codecoJson: {}
   },
   getters: {
-    getEdiContent: (state) => state.ediContent,
-    getEdiJson: (state) => state.ediJson,
+    getEdiContent: state => state.ediContent,
+    getBaplieJson: state => state.baplieJson,
+    getCodecoJson: state => state.codecoJson,
   },
+  mutations: {
+    updateEdiContent(state, ediContent) {
+      state.ediContent = ediContent
+    },
+    updateBaplieJson(state, baplieJson) {
+      state.baplieJson = baplieJson
+    },
+    updateCodecoJson(state, codecoJson) {
+      state.codecoJson = codecoJson
+    }
+  },
+  actions: {
+    updateEdiContent({ commit }, ediContent) {
+      commit('updateEdiContent', ediContent)
+    },
+    updateBaplieJson({ commit }, baplieJson) {
+      commit('updateBaplieJson', baplieJson)
+    },
+    updateCodecoJson({ commit }, codecoJson) {
+      commit('updateCodecoJson', codecoJson)
+    }
+  },
+  modules: {}
 })
