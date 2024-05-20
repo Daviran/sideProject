@@ -1,7 +1,6 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import axios from 'axios'
 
 export default {
   setup() {
@@ -10,6 +9,7 @@ export default {
     const hiddenInput = ref(null)
     const preElement = ref(null) // Reference to the pre element
     let originalEdiName = '' // Variable to store the original filename
+
     const loadEdiContentFromStore = () => {
       // Retrieve EDI content from the Vuex store
       const storedEdiContent = store.getters.getEdiContent
@@ -20,42 +20,35 @@ export default {
     }
     onMounted(loadEdiContentFromStore)
 
-const handleFileChange = async (event) => {
-  const file = event.target.files[0];
-  const validTypes = ['text/plain', 'application/edi-x12', 'application/edi-consent'];
-  const validExtensions = ['.edi', '.txt'];
+    const handleFileChange = (event) => {
+      const file = event.target.files[0]
+      const validTypes = ['text/plain', 'application/edi-x12', 'application/edi-consent']
+      const validExtensions = ['.edi', '.txt']
 
-  if (file && (validTypes.includes(file.type) || validExtensions.some(ext => file.name.endsWith(ext)))) {
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const Edi = reader.result;
-      const parsedEdi = splitTextBySingleQuote(Edi);
-      ediData.value = { content: parsedEdi };
-      console.log('dispatching');
-      store.dispatch('updateEdiContent', parsedEdi);
+      if (file) {
+        const fileTypeValid = validTypes.includes(file.type)
+        const fileExtensionValid = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
 
-      // Send the EDI file to the backend
-      const formData = new FormData();
-      formData.append('file', file);
-      try {
-        const response = await axios.post('http://localhost:8080/api/parse/baplie', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        store.dispatch('updateEdiJson', response.data);
-      } catch (error) {
-        console.error('Error uploading file:', error);
+        console.log(`File type: ${file.type}, file name: ${file.name}`)
+        console.log(`File type valid: ${fileTypeValid}, file extension valid: ${fileExtensionValid}`)
+
+        if (fileTypeValid || fileExtensionValid) {
+          const reader = new FileReader()
+          reader.onload = () => {
+            const Edi = reader.result
+            const formattedEdi = Edi.split("'").join("\n") // Split by `'` and join with new line
+            ediData.value = { content: formattedEdi }
+            store.dispatch('updateEdiContent', formattedEdi)
+          }
+          reader.readAsText(file)
+          originalEdiName = file.name
+        } else {
+          console.error('Please select a valid text/edi file.')
+        }
+      } else {
+        console.error('No file selected.')
       }
-    };
-    reader.readAsText(file);
-    originalEdiName = file.name;
-  } else {
-    // Handle error if file is not valid
-    console.error('Please select a valid text/edi file.');
-  }
-};
-
+    }
 
     const handleInput = () => {
       if (ediData.value && preElement) {
@@ -80,9 +73,7 @@ const handleFileChange = async (event) => {
         }, 0)
       }
     }
-    const splitTextBySingleQuote = (text) => {
-      return text.split("'").join('\n')
-    }
+
     const saveAsTxt = () => {
       if (ediData.value && preElement) {
         // Update the EdiData.content with the modified text
@@ -102,6 +93,7 @@ const handleFileChange = async (event) => {
         document.body.removeChild(a)
       }
     }
+
     const clearData = () => {
       ediData.value = null
       store.dispatch('updateEdiContent', '') // Clear store data

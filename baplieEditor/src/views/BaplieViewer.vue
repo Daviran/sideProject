@@ -41,25 +41,38 @@
 <script>
 import { ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import { parseBaplieData } from '../utils/baplieParser'
+import axios from 'axios'
 
 export default {
   setup() {
-    const baplieData = { ports: [], containers: [] }
+    const baplieData = ref({ ports: [], containers: [] })
     const store = useStore()
     const loading = ref(true)
 
-    onMounted(() => {
+    onMounted(async () => {
       const ediContent = store.getters.getEdiContent
       if (ediContent) {
         loading.value = true
-        setTimeout(() => {
-            
-          const parsedData = parseBaplieData(ediContent)
-          console.log(parsedData.containers)
-          Object.assign(baplieData, parsedData)
+
+        // Send the EDI content to the backend to parse
+        const formData = new FormData()
+        const blob = new Blob([ediContent], { type: 'text/plain' })
+        formData.append('file', blob, 'baplie.edi')
+
+        try {
+          const response = await axios.post('http://localhost:8080/api/parse/baplie', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+          baplieData.value = response.data
+        } catch (error) {
+          console.error('Error parsing EDI content:', error)
+        } finally {
           loading.value = false
-        }, 1000)
+        }
+      } else {
+        loading.value = false
       }
     })
 
@@ -70,4 +83,3 @@ export default {
   }
 }
 </script>
-
