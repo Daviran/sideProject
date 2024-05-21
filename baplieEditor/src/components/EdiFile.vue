@@ -26,7 +26,7 @@ export default {
       const validExtensions = ['.edi', '.txt']
       if (file) {
         const fileTypeValid = validTypes.includes(file.type)
-        const fileExtensionValid = validExtensions.some(ext => file.name.endsWith(ext))
+        const fileExtensionValid = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
 
         console.log(`File type: ${file.type}, file name: ${file.name}`)
         console.log(`File type valid: ${fileTypeValid}, file extension valid: ${fileExtensionValid}`)

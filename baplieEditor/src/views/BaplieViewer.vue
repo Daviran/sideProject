@@ -1,38 +1,29 @@
 <template>
   <div>
     <h2>Baplie Viewer</h2>
-    <div v-if="baplieData">
-      <table v-if="!loading">
-        <thead>
-          <tr>
-            <th>Container Number</th>
-            <th>Port of Loading</th>
-            <th>Port of Discharge</th>
-            <th>Port of Destination</th>
-            <th>Gross Weight</th>
-            <th>VGM Weight</th>
-          </tr>
-        </thead>
-        <tbody v-if="baplieData.containers && baplieData.containers.length > 0">
-          <tr v-for="container in baplieData.containers" :key="container.number">
-            <td>{{ container.number }}</td>
-            <td>{{ container.portOfLoading || '-' }}</td>
-            <td>{{ container.portOfDischarge || '-' }}</td>
-            <td>{{ container.portOfDestination || '-' }}</td>
-            <td>{{ container.grossWeight || '-' }}</td>
-            <td>{{ container.vgmWeight || '-' }}</td>
-          </tr>
-        </tbody>
-        <tbody v-else>
-          <tr>
-            <td colspan="7">No container data available</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div v-else>
-      <h5>No Baplie data found!</h5>
-    </div>
+    <v-data-table
+      v-if="!loading && baplieData.containers.length > 0"
+      :headers="headers"
+      :items="baplieData.containers"
+      class="elevation-1"
+    >
+      <template v-slot:item="{ item }">
+        <tr>
+          <td>{{ item.number }}</td>
+          <td>{{ item.portOfLoading || '-' }}</td>
+          <td>{{ item.portOfDischarge || '-' }}</td>
+          <td>{{ item.portOfDestination || '-' }}</td>
+          <td>{{ item.grossWeight || '-' }}</td>
+          <td>{{ item.vgmWeight || '-' }}</td>
+          <td>{{ item.position || '-' }}</td>
+        </tr>
+      </template>
+      <template v-slot:no-data>
+        <v-alert type="info">No container data available</v-alert>
+      </template>
+    </v-data-table>
+    <v-alert v-else-if="!loading" type="error">No Baplie data found!</v-alert>
+    <v-progress-linear v-else :indeterminate="true"></v-progress-linear>
   </div>
 </template>
 
@@ -46,6 +37,15 @@ export default {
     const baplieData = ref({ ports: [], containers: [] })
     const store = useStore()
     const loading = ref(true)
+    const headers = [
+      { text: 'Container Number', value: 'number' },
+      { text: 'Port of Loading', value: 'portOfLoading' },
+      { text: 'Port of Discharge', value: 'portOfDischarge' },
+      { text: 'Port of Destination', value: 'portOfDestination' },
+      { text: 'Gross Weight', value: 'grossWeight' },
+      { text: 'VGM Weight', value: 'vgmWeight' },
+      { text: 'Position', value: 'position' }
+    ]
 
     onMounted(async () => {
       const ediContent = store.getters.getEdiContent
@@ -64,6 +64,7 @@ export default {
             },
           })
           baplieData.value = response.data
+          console.log(baplieData.value)
         } catch (error) {
           console.error('Error parsing EDI content:', error)
         } finally {
@@ -76,7 +77,8 @@ export default {
 
     return {
       baplieData,
-      loading
+      loading,
+      headers
     }
   }
 }

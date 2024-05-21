@@ -1,6 +1,5 @@
 package edi.editor.ediApi.utils;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,6 +16,8 @@ public class BaplieParser {
         public String containerCarrier;
         public String grossWeight;
         public String vgmWeight;
+        public String position;
+        public String shipper;
     }
 
     public static class BaplieData {
@@ -78,17 +79,11 @@ public class BaplieParser {
                                     currentContainer.portOfDestination = locationName;
                                     System.out.println("POD updated: " + locationName); // Debug statement
                                     break;
+                                case "147":
+                                    currentContainer.position = locationName;
+                                    System.out.println("Position updated: " + locationName); // Debug statement
+                                    break;
                             }
-                        }
-                    }
-                    break;
-
-                case "NAD":
-                    if (elements.length > 2) {
-                        String carrierCode = elements[2].trim().split(":")[0];
-                        if (currentContainer != null) {
-                            currentContainer.containerCarrier = carrierCode;
-                            System.out.println("Carrier updated: " + carrierCode); // Debug statement
                         }
                     }
                     break;
@@ -105,6 +100,16 @@ public class BaplieParser {
                                 currentContainer.vgmWeight = measurementValue;
                                 System.out.println("VGM weight updated: " + measurementValue); // Debug statement
                             }
+                        }
+                    }
+                    break;
+
+                case "NAD":
+                    if (elements.length > 2) {
+                        String carrierCode = elements[2].trim().split(":")[0];
+                        if (currentContainer != null) { // Ensure current container is not null
+                            currentContainer.containerCarrier = carrierCode;
+                            System.out.println("Carrier updated: " + carrierCode); // Debug statement
                         }
                     }
                     break;
