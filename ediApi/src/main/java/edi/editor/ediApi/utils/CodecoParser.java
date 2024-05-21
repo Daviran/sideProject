@@ -1,44 +1,32 @@
 package edi.editor.ediApi.utils;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class BaplieParser {
+public class CodecoParser {
 
     public static class Container {
         public String number;
         public String portOfLoading;
         public String portOfDischarge;
-        public String portOfDestination;
         public String containerCarrier;
         public String grossWeight;
         public String vgmWeight;
     }
 
-    public static class BaplieData {
+    public static class CodecoData {
         public List<Container> containers = new ArrayList<>();
     }
 
-    public static BaplieData parse(BufferedReader reader) throws IOException {
-        BaplieData baplieData = new BaplieData();
-        List<String> lines = new ArrayList<>();
-        String line;
-
-        while ((line = reader.readLine()) != null) {
-            lines.add(line.trim());
-        }
-
-        Collections.reverse(lines);  // Reverse the lines to read from bottom to top
-
+    public static CodecoData parse(BufferedReader reader) throws IOException {
+        CodecoData codecoData = new CodecoData();
         Container currentContainer = null;
 
-        for (String segment : lines) {
-            if (segment.isEmpty()) continue;
-
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String segment = line.trim();
             System.out.println("Processing segment: " + segment); // Debug statement
 
             // Split the segment using the '+' delimiter
@@ -55,7 +43,7 @@ public class BaplieParser {
                         String containerNumber = elements[2].trim();
                         currentContainer = new Container();
                         currentContainer.number = containerNumber;
-                        baplieData.containers.add(currentContainer);
+                        codecoData.containers.add(currentContainer);
                         System.out.println("New container added: " + containerNumber); // Debug statement
                     }
                     break;
@@ -72,10 +60,6 @@ public class BaplieParser {
                                     break;
                                 case "11":
                                     currentContainer.portOfDischarge = locationName;
-                                    System.out.println("POD updated: " + locationName); // Debug statement
-                                    break;
-                                case "83":
-                                    currentContainer.portOfDestination = locationName;
                                     System.out.println("POD updated: " + locationName); // Debug statement
                                     break;
                             }
@@ -96,14 +80,17 @@ public class BaplieParser {
                 case "MEA":
                     if (elements.length > 3) {
                         String measurementCode = elements[1].trim();
-                        String measurementValue = elements[3].split(":")[1].trim();
-                        if (currentContainer != null) {
-                            if (measurementCode.equals("AAE")) {
-                                currentContainer.grossWeight = measurementValue;
-                                System.out.println("Gross weight updated: " + measurementValue); // Debug statement
-                            } else if (measurementCode.equals("VGM")) {
-                                currentContainer.vgmWeight = measurementValue;
-                                System.out.println("VGM weight updated: " + measurementValue); // Debug statement
+                        String[] measurementParts = elements[3].split(":");
+                        if (measurementParts.length > 1) {
+                            String measurementValue = measurementParts[1].trim();
+                            if (currentContainer != null) {
+                                if (measurementCode.equals("AAE")) {
+                                    currentContainer.grossWeight = measurementValue;
+                                    System.out.println("Gross weight updated: " + measurementValue); // Debug statement
+                                } else if (measurementCode.equals("KGM") || measurementCode.equals("VGM")) {
+                                    currentContainer.vgmWeight = measurementValue;
+                                    System.out.println("VGM weight updated: " + measurementValue); // Debug statement
+                                }
                             }
                         }
                     }
@@ -111,9 +98,6 @@ public class BaplieParser {
             }
         }
 
-        // Reverse the containers list to maintain the original order
-        Collections.reverse(baplieData.containers);
-
-        return baplieData;
+        return codecoData;
     }
 }
