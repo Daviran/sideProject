@@ -1,10 +1,16 @@
 <template>
   <div>
     <h2>Baplie Viewer</h2>
+    <v-text-field
+      v-model="search"
+      label="Search a container"
+      class="mb-4"
+    ></v-text-field>
     <v-data-table
       v-if="!loading && baplieData.containers.length > 0"
       :headers="headers"
       :items="baplieData.containers"
+      :search="search"
       class="elevation-1"
     >
       <template v-slot:item="{ item }">
@@ -37,14 +43,15 @@ export default {
     const baplieData = ref({ ports: [], containers: [] })
     const store = useStore()
     const loading = ref(true)
+    const search = ref('') // Add the search ref
     const headers = [
-      { text: 'Container Number', value: 'number' },
-      { text: 'Port of Loading', value: 'portOfLoading' },
-      { text: 'Port of Discharge', value: 'portOfDischarge' },
-      { text: 'Port of Destination', value: 'portOfDestination' },
-      { text: 'Gross Weight', value: 'grossWeight' },
-      { text: 'VGM Weight', value: 'vgmWeight' },
-      { text: 'Position', value: 'position' }
+      { title: 'Container', key: 'number' },
+      { title: 'Port of Loading', key: 'portOfLoading' },
+      { title: 'Port of Discharge', key: 'portOfDischarge' },
+      { title: 'Port of Destination', key: 'portOfDestination' },
+      { title: 'Gross Weight', key: 'grossWeight' },
+      { title: 'VGM Weight', key: 'vgmWeight' },
+      { title: 'Position', key: 'position' }
     ]
 
     onMounted(async () => {
@@ -78,8 +85,15 @@ export default {
     return {
       baplieData,
       loading,
-      headers
+      headers,
+      search // Add search to the returned values
     }
   }
 }
 </script>
+
+<style scoped>
+.mb-4 {
+  margin-bottom: 16px;
+}
+</style>

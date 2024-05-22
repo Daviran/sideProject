@@ -2,9 +2,11 @@
 import { ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
 
+
 export default {
   setup() {
     const ediData = ref(null)
+    const ediType = ref('') // Variable to store the type of EDI
     const store = useStore()
     const hiddenInput = ref(null)
     const preElement = ref(null) // Reference to the pre element
@@ -16,6 +18,7 @@ export default {
       if (storedEdiContent) {
         ediData.value = { content: storedEdiContent }
         hiddenInput.value.value = storedEdiContent // Set value of hidden input
+        detectEdiType(storedEdiContent) // Detect the EDI type
       }
     }
     onMounted(loadEdiContentFromStore)
@@ -38,6 +41,7 @@ export default {
             const formattedEdi = Edi.split("'").join("\n") // Split by `'` and join with new line
             ediData.value = { content: formattedEdi }
             store.dispatch('updateEdiContent', formattedEdi)
+            detectEdiType(formattedEdi) // Detect the EDI type
           }
           reader.readAsText(file)
           originalEdiName = file.name
@@ -46,6 +50,20 @@ export default {
         }
       } else {
         console.error('No file selected.')
+      }
+    }
+
+    const detectEdiType = (ediContent) => {
+      const lines = ediContent.split('\n')
+      const unhSegment = lines.find(line => line.startsWith('UNH'))
+      if (unhSegment) {
+        if (unhSegment.includes('BAPLIE')) {
+          ediType.value = 'Baplie EDI detected'
+        } else if (unhSegment.includes('CODECO')) {
+          ediType.value = 'Codeco EDI detected'
+        } else {
+          ediType.value = 'Unknown EDI type'
+        }
       }
     }
 
@@ -95,6 +113,7 @@ export default {
 
     const clearData = () => {
       ediData.value = null
+      ediType.value = '' // Clear EDI type
       store.dispatch('updateEdiContent', '') // Clear store data
       preElement.value.textContent = '' // Clear pre content
       hiddenInput.value.value = '' // Clear hidden input value
@@ -102,6 +121,7 @@ export default {
 
     return {
       ediData,
+      ediType,
       handleFileChange,
       handleInput,
       saveAsTxt,
@@ -127,7 +147,7 @@ export default {
     >
     </v-file-input>
     <div v-if="ediData !== null">
-      <h2>Edi Content</h2>
+      <h2>{{ ediType }}</h2>
       <v-row>
         <v-col cols="8">
           <pre ref="preElement" contenteditable="true" @input="handleInput">{{

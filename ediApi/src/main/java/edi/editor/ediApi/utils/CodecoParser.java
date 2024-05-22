@@ -8,12 +8,13 @@ import java.util.List;
 public class CodecoParser {
 
     public static class Container {
-        public String number;
-        public String portOfLoading;
-        public String portOfDischarge;
-        public String containerCarrier;
-        public String grossWeight;
-        public String vgmWeight;
+        public String containerNumber;
+        public String dateTime;
+        public String location;
+        public String equipmentType;
+        public String fullEmptyIndicator;
+        public String sealNumber;
+        public String weight;
     }
 
     public static class CodecoData {
@@ -22,78 +23,80 @@ public class CodecoParser {
 
     public static CodecoData parse(BufferedReader reader) throws IOException {
         CodecoData codecoData = new CodecoData();
+        String line;
         Container currentContainer = null;
 
-        String line;
         while ((line = reader.readLine()) != null) {
-            String segment = line.trim();
-            System.out.println("Processing segment: " + segment); // Debug statement
+            line = line.trim();
+            if (line.isEmpty()) continue;
 
-            // Split the segment using the '+' delimiter
-            String[] elements = segment.split("\\+");
+            System.out.println("Processing segment: " + line);
+
+            String[] elements = line.split("\\+");
             if (elements.length == 0) continue;
 
             String segmentId = elements[0];
-            System.out.println("Segment ID: " + segmentId); // Debug statement
-            System.out.println("Elements: " + java.util.Arrays.toString(elements)); // Debug statement
+            System.out.println("Segment ID: " + segmentId);
 
             switch (segmentId) {
                 case "EQD":
                     if (elements.length > 2) {
                         String containerNumber = elements[2].trim();
                         currentContainer = new Container();
-                        currentContainer.number = containerNumber;
+                        currentContainer.containerNumber = containerNumber;
+                        currentContainer.equipmentType = elements.length > 3 ? elements[3].trim() : null;
                         codecoData.containers.add(currentContainer);
-                        System.out.println("New container added: " + containerNumber); // Debug statement
+                        System.out.println("New container added: " + containerNumber);
+                    }
+                    break;
+
+                case "DTM":
+                    if (elements.length > 1 && currentContainer != null) {
+                        currentContainer.dateTime = elements[1].split(":")[1].trim();
+                        System.out.println("Date/Time updated: " + currentContainer.dateTime);
                     }
                     break;
 
                 case "LOC":
-                    if (elements.length > 2) {
-                        String locationCode = elements[1];
-                        String locationName = elements[2].split(":")[0].trim();
-                        if (currentContainer != null) {
-                            switch (locationCode) {
-                                case "9":
-                                    currentContainer.portOfLoading = locationName;
-                                    System.out.println("POL updated: " + locationName); // Debug statement
-                                    break;
-                                case "11":
-                                    currentContainer.portOfDischarge = locationName;
-                                    System.out.println("POD updated: " + locationName); // Debug statement
-                                    break;
-                            }
-                        }
+                    if (elements.length > 2 && currentContainer != null) {
+                        currentContainer.location = elements[2].split(":")[0].trim();
+                        System.out.println("Location updated: " + currentContainer.location);
                     }
                     break;
 
-                case "NAD":
-                    if (elements.length > 2) {
-                        String carrierCode = elements[2].trim().split(":")[0];
-                        if (currentContainer != null) {
-                            currentContainer.containerCarrier = carrierCode;
-                            System.out.println("Carrier updated: " + carrierCode); // Debug statement
-                        }
+                case "FTX":
+                    if (elements.length > 4 && currentContainer != null) {
+                        currentContainer.fullEmptyIndicator = elements[4].trim();
+                        System.out.println("Full/Empty Indicator updated: " + currentContainer.fullEmptyIndicator);
+                    }
+                    break;
+
+                case "SEL":
+                    if (elements.length > 1 && currentContainer != null) {
+                        currentContainer.sealNumber = elements[1].trim();
+                        System.out.println("Seal Number updated: " + currentContainer.sealNumber);
                     }
                     break;
 
                 case "MEA":
-                    if (elements.length > 3) {
-                        String measurementCode = elements[1].trim();
+                    System.out.println("ELEMENT LENGTH: " + elements.length);
+                    if (elements.length > 3 && currentContainer != null) {
                         String[] measurementParts = elements[3].split(":");
-                        if (measurementParts.length > 1) {
-                            String measurementValue = measurementParts[1].trim();
-                            if (currentContainer != null) {
-                                if (measurementCode.equals("AAE")) {
-                                    currentContainer.grossWeight = measurementValue;
-                                    System.out.println("Gross weight updated: " + measurementValue); // Debug statement
-                                } else if (measurementCode.equals("KGM") || measurementCode.equals("VGM")) {
-                                    currentContainer.vgmWeight = measurementValue;
-                                    System.out.println("VGM weight updated: " + measurementValue); // Debug statement
-                                }
-                            }
+                        if (measurementParts.length > 1 && measurementParts[0].equals("KGM")) {
+                            currentContainer.weight = measurementParts[1].trim();
+                            System.out.println("Weight updated: " + currentContainer.weight);
+                        }
+                    } else if (elements.length == 3 && currentContainer != null) {
+                        String[] measurementParts = elements[2].split(":");
+                        if (measurementParts.length > 1 && measurementParts[0].equals("KGM")) {
+                            currentContainer.weight = measurementParts[1].trim();
+                            System.out.println("Weight updated: " + currentContainer.weight);
                         }
                     }
+                    break;
+
+                default:
+                    System.out.println("Unhandled segment ID: " + segmentId);
                     break;
             }
         }
