@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./baplieEditor
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - ediapi
+
+  ediapi:
+    build:
+      context: ./ediApi
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
